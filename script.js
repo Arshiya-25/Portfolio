@@ -1,49 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const themeToggle = document.getElementById("theme-toggle");
-  const body = document.body;
-  const navLinks = document.querySelectorAll(".nav-links a");
-
-  // --- Theme Toggle Functionality ---
-  const currentTheme = localStorage.getItem("theme");
-  if (currentTheme) {
-    body.classList.add(currentTheme);
-    if (currentTheme === "dark-theme") {
-      themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-    } else {
-      themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-    }
-  } else {
-    // Default to light theme if no preference is found
-    body.classList.add("light-theme");
-    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-  }
-
-  themeToggle.addEventListener("click", () => {
-    if (body.classList.contains("dark-theme")) {
-      body.classList.remove("dark-theme");
-      body.classList.add("light-theme");
-      themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-      localStorage.setItem("theme", "light-theme");
-    } else {
-      body.classList.remove("light-theme");
-      body.classList.add("dark-theme");
-      themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-      localStorage.setItem("theme", "dark-theme");
-    }
-  });
-
   // --- Smooth Scrolling for Navigation ---
+  const navLinks = document.querySelectorAll(".nav-links a");
+  const sections = document.querySelectorAll("section");
+  const header = document.querySelector(".header");
+
   navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
-      navLinks.forEach((nav) => nav.classList.remove("active"));
-      link.classList.add("active");
 
       const targetId = link.getAttribute("href").substring(1);
       const targetSection = document.getElementById(targetId);
 
       if (targetSection) {
-        const headerOffset = document.querySelector(".header").offsetHeight;
+        const headerOffset = header.offsetHeight;
         const elementPosition =
           targetSection.getBoundingClientRect().top + window.scrollY;
         const offsetPosition = elementPosition - headerOffset - 20;
@@ -52,16 +21,18 @@ document.addEventListener("DOMContentLoaded", () => {
           top: offsetPosition,
           behavior: "smooth",
         });
+
+        navLinks.forEach((nav) => nav.classList.remove("active"));
+        link.classList.add("active");
       }
     });
   });
 
   // --- Highlight active nav link on scroll ---
-  const sections = document.querySelectorAll("section");
-  const headerHeight = document.querySelector(".header").offsetHeight;
-
   window.addEventListener("scroll", () => {
     let current = "";
+    const headerHeight = header.offsetHeight;
+
     sections.forEach((section) => {
       const sectionTop = section.offsetTop - headerHeight - 30;
       const sectionHeight = section.clientHeight;
@@ -78,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Set initial active link on page load
   if (window.location.hash === "" || window.location.hash === "#home") {
     document
       .querySelector('.nav-links a[href="#home"]')
